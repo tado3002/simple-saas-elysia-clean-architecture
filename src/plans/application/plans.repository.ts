@@ -5,4 +5,5 @@ export interface PlanRepository {
 	verifyFeatures(ids: string[]): Promise<boolean>;
 	createPivotPlanFeatures(planId: string, featureIds: string[]): Promise<void>;
 	findAll(): Promise<any>;
+	findById(id: string): Promise<Plan | null>;
 }

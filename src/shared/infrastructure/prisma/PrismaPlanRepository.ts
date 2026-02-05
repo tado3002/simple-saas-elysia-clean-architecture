@@ -33,4 +33,7 @@ export class PrismaPlanRepository implements PlanRepository {
 			include: { plan_features: { include: { feature: true } } },
 		});
 	}
+	async findById(id: string): Promise<Plan | null> {
+		return await prisma.plan.findUnique({ where: { id } });
+	}
 }

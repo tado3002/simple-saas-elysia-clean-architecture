@@ -20,6 +20,8 @@ model User {
   password String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  subscriptions Subscriptions[]
   
   @@map("users")
 }
@@ -55,6 +57,7 @@ model Plan {
   updatedAt DateTime @updatedAt
 
   plan_features Plan_Features[]
+  subscriptions Subscriptions[]
 
   @@map("plans")
 }
@@ -70,3 +73,40 @@ model Plan_Features {
   @@map("plan_features")
 }
 
+enum SubscriptionStatus {
+  active
+  pending
+  cancel
+}
+
+model Subscriptions {
+  id String @id @default(cuid())
+  price BigInt
+  userId String 
+  user User? @relation(references: [id], fields: [userId], onDelete: NoAction, onUpdate: NoAction)
+  planId String
+  plan Plan @relation(references: [id], fields: [planId], onDelete: NoAction, onUpdate: NoAction)
+  status  SubscriptionStatus @default(pending)
+  startAt DateTime?
+  endAt DateTime? 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  payments Payments[]
+
+  @@map("subscriptions")
+}
+
+model Payments {
+  id String @id @default(cuid())
+  amount BigInt
+  status String 
+  paymentType String
+  subscriptionId String
+  subscription Subscriptions @relation(references: [id], fields: [subscriptionId],onDelete: NoAction, onUpdate: NoAction)
+  payedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("payments")
+}
