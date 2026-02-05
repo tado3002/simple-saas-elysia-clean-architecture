@@ -6,6 +6,8 @@
 		"dev": "bun run --watch src/app.ts"
 	},
 	"dependencies": {
+		"@elysiajs/cors": "^1.4.1",
+		"@elysiajs/static": "^1.4.7",
 		"@prisma/adapter-pg": "^7.3.0",
 		"@prisma/client": "^7.3.0",
 		"elysia": "latest",

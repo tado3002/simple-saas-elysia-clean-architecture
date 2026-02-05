@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="id">
+	<head>
+		<meta charset="UTF-8" />
+		<title>Midtrans Snap Test</title>
+
+		<!-- Midtrans Snap (Sandbox) -->
+		<script
+			src="https://app.sandbox.midtrans.com/snap/snap.js"
+			data-client-key="YOUR_CLIENT_KEY"
+		></script>
+
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+				padding: 24px;
+				max-width: 600px;
+				margin: auto;
+			}
+			select,
+			button {
+				width: 100%;
+				padding: 8px;
+				margin-top: 8px;
+			}
+			.plan {
+				border: 1px solid #ddd;
+				padding: 12px;
+				margin-top: 12px;
+			}
+		</style>
+	</head>
+	<body>
+		<h2>Test Payment Midtrans (Snap)</h2>
+
+		<label>User</label>
+		<select id="userSelect"></select>
+
+		<label>Plan</label>
+		<select id="planSelect"></select>
+
+		<button onclick="order()">Order & Pay</button>
+
+		<script>
+			const API_BASE = "http://localhost:3000/api/v1";
+
+			let users = [];
+			let plans = [];
+
+			// Load users
+			async function loadUsers() {
+				const res = await fetch(`${API_BASE}/users`);
+				const json = await res.json();
+				users = json.data;
+
+				const userSelect = document.getElementById("userSelect");
+				users.forEach((user) => {
+					const opt = document.createElement("option");
+					opt.value = user.id;
+					opt.textContent = `${user.name} (${user.email})`;
+					userSelect.appendChild(opt);
+				});
+			}
+
+			// Load plans
+			async function loadPlans() {
+				const res = await fetch(`${API_BASE}/plans`);
+				const json = await res.json();
+				plans = json.data;
+
+				const planSelect = document.getElementById("planSelect");
+				plans.forEach((plan) => {
+					const opt = document.createElement("option");
+					opt.value = plan.id;
+					opt.textContent = `${plan.name} - Rp ${plan.price} / ${plan.billingInterval}`;
+					planSelect.appendChild(opt);
+				});
+			}
+
+			// Order subscription + pay
+			async function order() {
+				const userId = document.getElementById("userSelect").value;
+				const planId = document.getElementById("planSelect").value;
+
+				if (!userId || !planId) {
+					alert("User & Plan wajib dipilih");
+					return;
+				}
+
+				// Create subscription
+				const res = await fetch(`${API_BASE}/subscriptions`, {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
+						userId,
+						planId,
+					}),
+				});
+
+				const json = await res.json();
+				const token = json.data.token;
+
+				if (!token) {
+					alert("Token snap tidak ditemukan");
+					return;
+				}
+
+				// Trigger Midtrans Snap
+				window.snap.pay(token, {
+					onSuccess: function (result) {
+						console.log("SUCCESS", result);
+						alert("Pembayaran sukses");
+					},
+					onPending: function (result) {
+						console.log("PENDING", result);
+						alert("Menunggu pembayaran");
+					},
+					onError: function (result) {
+						console.error("ERROR", result);
+						alert("Pembayaran gagal");
+					},
+					onClose: function () {
+						alert("Popup ditutup");
+					},
+				});
+			}
+
+			// init
+			loadUsers();
+			loadPlans();
+		</script>
+	</body>
+</html>

@@ -101,7 +101,7 @@ model Payments {
   id String @id @default(cuid())
   amount BigInt
   status String 
-  paymentType String
+  paymentType String?
   subscriptionId String
   subscription Subscriptions @relation(references: [id], fields: [subscriptionId],onDelete: NoAction, onUpdate: NoAction)
   payedAt DateTime?
