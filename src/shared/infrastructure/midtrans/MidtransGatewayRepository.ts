@@ -2,23 +2,19 @@ import { PaymentGatewaysRepository } from "../../../payment-gateways/application
 import axios from "axios";
 import { env } from "../../env";
 import { status } from "elysia";
-import { Subscription } from "../../../subscriptions/domain/subscription.type";
 import { User } from "../../../users/domain/user.type";
 import { Payment } from "../../../payments/domain/payment.type";
+import { Order } from "../../../orders/domain/order.type";
 
 export class MidtransGatewayRepository implements PaymentGatewaysRepository {
 	private midtransTransactionUrl = env.MIDTRANS_TRANSACTION_URL;
 	private midtransServerKey = env.MIDTRANS_SERVER_KEY;
 	private midtransPassword = env.MIDTRANS_PASSWORD;
-	async create(
-		order: Subscription,
-		payment: Payment,
-		customer: User,
-	): Promise<string> {
+	async create(order: Order, customer: User): Promise<string> {
 		const parameter = {
 			transaction_details: {
-				order_id: payment.id,
-				gross_amount: Number(order.price),
+				order_id: order.id,
+				gross_amount: Number(order.amount),
 			},
 			customer_details: {
 				first_name: customer.name,

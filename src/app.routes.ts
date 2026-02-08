@@ -6,6 +6,7 @@ import { FeatureController } from "./features/infrastructure/feature.controller"
 import { PlansController } from "./plans/infrastructure/plans.controller";
 import { PaymentController } from "./payments/infrastructure/payment.controller";
 import { SubscriptionController } from "./subscriptions/infrastructure/subscription.controller";
+import { OrderController } from "./orders/infrastructure/order.controller";
 
 const routes = new Elysia({ prefix: "/api/v1" })
 	.use(AuthController)
@@ -14,6 +15,6 @@ const routes = new Elysia({ prefix: "/api/v1" })
 	.use(PlansController)
 	.use(TodoController)
 	.use(PaymentController)
-	.use(SubscriptionController);
-
+	.use(SubscriptionController)
+	.use(OrderController);
 export { routes as AppRoutes };

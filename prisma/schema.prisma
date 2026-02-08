@@ -100,10 +100,10 @@ model Subscriptions {
 model Orders {
   id String @id @default(cuid())
   amount BigInt
-  payed BigInt
+  payed BigInt @default(0)
   isSuccess Boolean @default(false)
-  subcriptionId String @unique
-  subscription Subscriptions @relation(references: [id], fields: [subcriptionId], onDelete: NoAction, onUpdate: NoAction)
+  subscriptionId String @unique
+  subscription Subscriptions @relation(references: [id], fields: [subscriptionId], onDelete: NoAction, onUpdate: NoAction)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

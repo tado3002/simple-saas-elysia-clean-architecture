@@ -5,12 +5,12 @@ import { PrismaPlanRepository } from "../../shared/infrastructure/prisma/PrismaP
 import { PrismaSubscriptionRepository } from "../../shared/infrastructure/prisma/PrismaSubscriptionRepository";
 import { CreateSubscriptionDto } from "../dto/createSubscription.dto";
 import { MidtransGatewayRepository } from "../../shared/infrastructure/midtrans/MidtransGatewayRepository";
-import { PrismaPaymentRepository } from "../../shared/infrastructure/prisma/PrismaPaymentRepository";
+import { PrismaOrderRepository } from "../../shared/infrastructure/prisma/PrismaOrderRepository";
 
 const userRepository = new PrismaUserRepository();
 const planRepository = new PrismaPlanRepository();
 const subscriptionRepository = new PrismaSubscriptionRepository();
-const paymentRepository = new PrismaPaymentRepository();
+const orderRepository = new PrismaOrderRepository();
 const paymentGatewayRepository = new MidtransGatewayRepository();
 
 export const SubscriptionController = new Elysia({
@@ -22,7 +22,7 @@ export const SubscriptionController = new Elysia({
 			subscriptionRepository,
 			userRepository,
 			planRepository,
-			paymentRepository,
+			orderRepository,
 			paymentGatewayRepository,
 		);
 		const data = await useCase.exec(body);

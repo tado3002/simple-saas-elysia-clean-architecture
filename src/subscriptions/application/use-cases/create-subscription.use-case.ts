@@ -5,16 +5,16 @@ import { CreateSubscriptionType } from "../../dto/createSubscription.dto";
 import { SubscriptionRepository } from "../subscription.repository";
 import { Subscription } from "../../domain/subscription.type";
 import { SubscriptionStatus } from "../../../../generated/prisma/enums";
-import { PaymentRepository } from "../../../payments/application/payment.repository";
-import { Payment } from "../../../payments/domain/payment.type";
 import { PaymentGatewaysRepository } from "../../../payment-gateways/application/payment-gateways.repository";
+import { Order } from "../../../orders/domain/order.type";
+import { OrderRepository } from "../../../orders/application/order.repository";
 
 export class CreateSubscriptionUseCase {
 	constructor(
 		private readonly subscriptionRepository: SubscriptionRepository,
 		private readonly userRepository: UserRepository,
 		private readonly planRepository: PlanRepository,
-		private readonly paymentRepository: PaymentRepository,
+		private readonly orderRepository: OrderRepository,
 		private readonly paymentGatewayRepository: PaymentGatewaysRepository,
 	) {}
 	async exec(dto: CreateSubscriptionType): Promise<any> {
@@ -31,7 +31,6 @@ export class CreateSubscriptionUseCase {
 			userId: user.id,
 			planId: plan.id,
 			status: SubscriptionStatus.pending,
-			price: plan.price,
 			startAt: null,
 			endAt: null,
 			createdAt: new Date(),
@@ -40,29 +39,24 @@ export class CreateSubscriptionUseCase {
 		const createdSubscription =
 			await this.subscriptionRepository.create(subscription);
 
-		// create payment
-		const payment: Payment = {
+		// create orders
+		const order: Order = {
 			id: Bun.randomUUIDv7(),
 			subscriptionId: createdSubscription.id,
-			amount: BigInt(0),
-			status: "pending",
-			paymentType: null,
-			payedAt: null,
+			amount: plan.price,
 			createdAt: new Date(),
 			updatedAt: new Date(),
 		};
-		const createdPayment = await this.paymentRepository.create(payment);
+		const createdOrder = await this.orderRepository.create(order);
 
 		// create token payment midtrans
 		const paymentGatewayToken = await this.paymentGatewayRepository.create(
-			createdSubscription,
-			createdPayment,
+			createdOrder,
 			user,
 		);
 
 		return {
 			...createdSubscription,
-			price: createdSubscription.price.toString(),
 			token: paymentGatewayToken,
 		};
 	}
