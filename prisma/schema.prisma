@@ -81,12 +81,12 @@ enum SubscriptionStatus {
 
 model Subscriptions {
   id String @id @default(cuid())
-  price BigInt
   userId String 
   user User? @relation(references: [id], fields: [userId], onDelete: NoAction, onUpdate: NoAction)
   planId String
   plan Plan @relation(references: [id], fields: [planId], onDelete: NoAction, onUpdate: NoAction)
   status  SubscriptionStatus @default(pending)
+  order Orders?
   startAt DateTime?
   endAt DateTime? 
   createdAt DateTime @default(now())
@@ -95,6 +95,19 @@ model Subscriptions {
   payments Payments[]
 
   @@map("subscriptions")
+}
+
+model Orders {
+  id String @id @default(cuid())
+  amount BigInt
+  payed BigInt
+  isSuccess Boolean @default(false)
+  subcriptionId String @unique
+  subscription Subscriptions @relation(references: [id], fields: [subcriptionId], onDelete: NoAction, onUpdate: NoAction)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("orders")
 }
 
 model Payments {
