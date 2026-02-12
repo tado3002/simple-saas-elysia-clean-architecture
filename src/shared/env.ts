@@ -9,6 +9,9 @@ const envSchema = z.object({
 	MIDTRANS_TRANSACTION_URL: z.string(),
 	MIDTRANS_SERVER_KEY: z.string(),
 	MIDTRANS_PASSWORD: z.string(),
+	// Jwt
+	JWT_SECRET_KEY: z.string(),
+	JWT_EXPIRES_IN: z.string(),
 });
 
 export const env = envSchema.parse(process.env);

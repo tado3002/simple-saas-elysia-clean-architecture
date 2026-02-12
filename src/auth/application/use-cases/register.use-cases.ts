@@ -11,16 +11,22 @@ export class RegisterUseCase {
 		const existedUser = await this.userRepository.findByEmail(dto.email);
 		if (existedUser) throw status(409);
 		// hash password
+		const hashedPassword = await this.hashPassword(dto.password);
 		// create user
 		const user: User = {
 			id: Bun.randomUUIDv7(),
 			name: dto.name,
+			role: "user",
 			email: dto.email,
-			password: dto.password,
+			password: hashedPassword,
 			createdAt: new Date(),
 			updatedAt: new Date(),
 		};
 		const data = await this.userRepository.create(user);
 		return data;
+	}
+
+	async hashPassword(password: string): Promise<string> {
+		return await Bun.password.hash(password);
 	}
 }

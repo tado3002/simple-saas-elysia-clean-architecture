@@ -1,12 +1,11 @@
-import { PaymentGatewaysRepository } from "../../../payment-gateways/application/payment-gateways.repository";
 import axios from "axios";
 import { env } from "../../env";
 import { status } from "elysia";
 import { User } from "../../../users/domain/user.type";
-import { Payment } from "../../../payments/domain/payment.type";
 import { Order } from "../../../orders/domain/order.type";
+import { PaymentGatewayService } from "../../application/services/payment-gateway.service";
 
-export class MidtransGatewayRepository implements PaymentGatewaysRepository {
+export class MidtransGatewayService implements PaymentGatewayService {
 	private midtransTransactionUrl = env.MIDTRANS_TRANSACTION_URL;
 	private midtransServerKey = env.MIDTRANS_SERVER_KEY;
 	private midtransPassword = env.MIDTRANS_PASSWORD;

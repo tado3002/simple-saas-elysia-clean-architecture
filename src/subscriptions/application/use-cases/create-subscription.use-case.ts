@@ -5,9 +5,9 @@ import { CreateSubscriptionType } from "../../dto/createSubscription.dto";
 import { SubscriptionRepository } from "../subscription.repository";
 import { Subscription } from "../../domain/subscription.type";
 import { SubscriptionStatus } from "../../../../generated/prisma/enums";
-import { PaymentGatewaysRepository } from "../../../payment-gateways/application/payment-gateways.repository";
 import { Order } from "../../../orders/domain/order.type";
 import { OrderRepository } from "../../../orders/application/order.repository";
+import { PaymentGatewayService } from "../../../shared/application/services/payment-gateway.service";
 
 export class CreateSubscriptionUseCase {
 	constructor(
@@ -15,7 +15,7 @@ export class CreateSubscriptionUseCase {
 		private readonly userRepository: UserRepository,
 		private readonly planRepository: PlanRepository,
 		private readonly orderRepository: OrderRepository,
-		private readonly paymentGatewayRepository: PaymentGatewaysRepository,
+		private readonly paymentGatewayService: PaymentGatewayService,
 	) {}
 	async exec(dto: CreateSubscriptionType): Promise<any> {
 		// verify userId
@@ -50,7 +50,7 @@ export class CreateSubscriptionUseCase {
 		const createdOrder = await this.orderRepository.create(order);
 
 		// create token payment midtrans
-		const paymentGatewayToken = await this.paymentGatewayRepository.create(
+		const paymentGatewayToken = await this.paymentGatewayService.create(
 			createdOrder,
 			user,
 		);
