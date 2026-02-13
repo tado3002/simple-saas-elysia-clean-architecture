@@ -10,8 +10,10 @@ const envSchema = z.object({
 	MIDTRANS_SERVER_KEY: z.string(),
 	MIDTRANS_PASSWORD: z.string(),
 	// Jwt
-	JWT_SECRET_KEY: z.string(),
-	JWT_EXPIRES_IN: z.string(),
+	JWT_ACCESS_SECRET_KEY: z.string(),
+	JWT_ACCESS_EXPIRES_IN: z.string(),
+	JWT_REFRESH_SECRET_KEY: z.string(),
+	JWT_REFRESH_EXPIRES_IN: z.string(),
 });
 
 export const env = envSchema.parse(process.env);

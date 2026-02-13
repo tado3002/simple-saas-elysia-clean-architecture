@@ -6,7 +6,8 @@ import { TokenService } from "../../../shared/application/services/token.service
 export class LoginUseCase {
 	constructor(
 		private readonly userRepository: UserRepository,
-		private readonly tokenService: TokenService,
+		private readonly accessTokenService: TokenService,
+		private readonly refreshTokenService: TokenService,
 	) {}
 
 	async exec(data: LoginDtoType) {
@@ -23,8 +24,11 @@ export class LoginUseCase {
 		// create accessToken
 		const payload = { userId: user!.id };
 		const accessToken: string =
-			await this.tokenService.signAccessToken(payload);
-		return { accessToken };
+			await this.accessTokenService.signAccessToken(payload);
+		// create refreshToken
+		const refreshToken: string =
+			await this.refreshTokenService.signAccessToken(payload);
+		return { accessToken, refreshToken };
 	}
 
 	async comparePassword(

@@ -6,6 +6,7 @@ import { LoginDto } from "../dto/login.dto";
 import { LoginUseCase } from "../application/use-cases/login.user-case";
 import { JwtPlugin } from "../../shared/infrastructure/jwt/jwt.plugin";
 import { ElysiaJwtTokenService } from "../../shared/infrastructure/jwt/ElysiaJwtTokenService";
+import { RefreshTokenUseCase } from "../application/use-cases/refresh-token.use-case";
 
 const userRepository = new PrismaUserRepository();
 
@@ -24,12 +25,31 @@ export const AuthController = new Elysia({ prefix: "auth" })
 	)
 	.post(
 		"/login",
-		async ({ body, jwt }) => {
-			const tokenService = new ElysiaJwtTokenService(jwt);
-			const useCase = new LoginUseCase(userRepository, tokenService);
+		async ({ body, jwtAccess, jwtRefresh }) => {
+			const accessTokenService = new ElysiaJwtTokenService(jwtAccess);
+			const refreshTokenService = new ElysiaJwtTokenService(jwtRefresh);
+			const useCase = new LoginUseCase(
+				userRepository,
+				accessTokenService,
+				refreshTokenService,
+			);
 			const data = await useCase.exec(body);
 
 			return status(200, { data });
 		},
 		{ body: LoginDto },
+	)
+	.post(
+		"/refresh",
+		async ({ body, jwtAccess, jwtRefresh }) => {
+			const accessTokenService = new ElysiaJwtTokenService(jwtAccess);
+			const refreshTokenService = new ElysiaJwtTokenService(jwtRefresh);
+			const useCase = new RefreshTokenUseCase(
+				accessTokenService,
+				refreshTokenService,
+			);
+			const data = await useCase.exec(body.token);
+			return status(200, { data });
+		},
+		{ body: t.Object({ token: t.String() }) },
 	);

@@ -6,13 +6,22 @@ const JwtPayload = t.Object({
 	userId: t.String(),
 });
 
-export const JwtPlugin = new Elysia().use(
-	jwt({
-		name: "jwt",
-		secret: env.JWT_SECRET_KEY,
-		exp: env.JWT_EXPIRES_IN,
-		schema: JwtPayload,
-	}),
-);
+export const JwtPlugin = new Elysia()
+	.use(
+		jwt({
+			name: "jwtAccess",
+			secret: env.JWT_ACCESS_SECRET_KEY,
+			exp: env.JWT_ACCESS_EXPIRES_IN,
+			schema: JwtPayload,
+		}),
+	)
+	.use(
+		jwt({
+			name: "jwtRefresh",
+			secret: env.JWT_REFRESH_SECRET_KEY,
+			exp: env.JWT_REFRESH_EXPIRES_IN,
+			schema: JwtPayload,
+		}),
+	);
 
 export type JwtPayloadType = Static<typeof JwtPayload>;

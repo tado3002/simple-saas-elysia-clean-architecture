@@ -8,7 +8,7 @@ import { User } from "../../../../../users/domain/user.type";
 
 type AuthContext = {
 	user?: User | null;
-	jwt: ElysiaJwt;
+	jwtAccess: ElysiaJwt;
 } & Context;
 
 export const AuthGuard = async (ctx: AuthContext) => {
@@ -19,7 +19,7 @@ export const AuthGuard = async (ctx: AuthContext) => {
 
 	const token = authHeader.split(" ")[1];
 	// verifiy token
-	const tokenService = new ElysiaJwtTokenService(ctx.jwt);
+	const tokenService = new ElysiaJwtTokenService(ctx.jwtAccess);
 	const payload = await tokenService.verifyAccessToken(token);
 	// store user data
 	const userRepository = new PrismaUserRepository();
